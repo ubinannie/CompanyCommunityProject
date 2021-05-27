@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  <mapper namespace="liketo">
+  
+  	<select id="countbyLike" resultType="int" parameterType="HashMap">
+  		select count(likeno) as cnt
+  		from liketo
+  		where brd_num=#{brd_num} AND mem_num=#{mem_num}
+  	</select>
+  	
+  	<insert id="like_create" parameterType="HashMap">
+  		insert into liketo(likeno, brd_num, mem_num, like_check)
+  		values ((select nvl(max(likeno),0)+1 as likeno from liketo),
+  			#{brd_num}, #{mem_num}, 0)
+  	</insert>
+  	
+  	<update id="like_check" parameterType="HashMap">
+  		update liketo
+  		set like_check = like_check + 1
+  		where brd_num=#{brd_num} AND mem_num=#{mem_num}
+  	</update>
+  	
+  	<update id="like_check_cancel" parameterType="HashMap">
+  		update liketo
+  		set like_check = 0
+  		where brd_num=#{brd_num} AND mem_num=#{mem_num}
+  	</update>
+  	
+  	<select id="like_read" parameterType="int">
+  		select likeno, brd_num, mem_num, like_check
+  		from liketo
+  		where brd_num=#{brd_num} AND mem_num=#{mem_num}
+  	</select>
+  
+  	<!-- 좋아요 삭제 : 게시물 번호로 삭제 -->
+  	<delete id="deletebybnum" parameterType="int">
+  		delete from liketo
+  		where brd_num=#{brd_num}
+  	</delete>
+  
+  	<!--
+  	<delete id="deletebyMemnum" parameterType="int">
+  		delete from liketo
+  		where mem_num=#{mem_num}
+  	</delete>
+  	 -->
+  	 
+  	 <!-- 좋아요 정렬 -->
+  	 
+  	 
+  	 <!-- 좋아요 정렬 카운트 -->
+  	 <!-- 
+  	 <select id="likelistPageBasic" resultType="company.blind.dto.LiketoDTO">
+		<![CDATA[
+			select * from liketo
+			where likeno > 0
+			order by likeno desc
+			limit #{startPage}, #{numPage}
+		]]>
+	</select>
+	 -->
+	
+	<!-- 고 보드 메퍼로 -->
+	<!-- 
+	<select id="LikeCountData" resultType="int">
+		select count(Like_cnt) from Go_Board
+		where Like_cnt > 0
+	</select>
+  	-->
+  	 
+  	 
+  </mapper>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  

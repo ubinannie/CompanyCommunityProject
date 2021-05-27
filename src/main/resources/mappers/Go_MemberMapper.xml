@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="company.blind.dao.Go_MemberDAO">
+
+	<insert id="inMem">
+		insert into go_member (mem_id, mem_email, mem_name, com_name)
+		values (#{mem_id}, #{mem_email}, #{mem_name}, #{com_name})
+	</insert>
+
+	<update id="upMem">
+		update go_member
+		set mem_email=#{mem_email}, com_name=#{com_name}
+		where mem_id = #{mem_id}
+	</update>
+
+	<delete id="deMem">
+		delete from go_member where mem_id=#{mem_id}
+	</delete>
+	
+	<select id="getMem" resultType="int">
+		select  count(*) from go_member
+		where mem_id = #{mem_id}
+	</select>
+
+	<select id="listMem" resultType="company.blind.dto.Go_MemberDTO">
+		select * from go_member
+	</select>
+	
+	<select id="listMemberByCom" resultType="company.blind.dto.Go_MemberDTO">
+		select * from go_member
+		where com_name=#{com_name}
+	</select>
+	
+	<select id="getCom" resultType="String">
+		select com_name from go_member
+		where mem_id=#{mem_id}
+	</select>
+	
+
+</mapper>

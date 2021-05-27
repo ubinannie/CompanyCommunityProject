@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="company.blind.dao.Go_Board_CompanyDAO">
+
+	<!-- 회사 소식 : 게시판 작성 -->
+	<!-- where mem_level = #{2}  -->
+	<insert id="insertcompanyboard">
+		<!-- 
+		일반 insert 문 :
+		insert into go_board_company_table (brd_cm_title, brd_cm_cont, com_name, mem_id)
+		values (#{brd_cm_title}, #{brd_cm_cont}, #{com_name}, #{mem_id})
+		-> 정상 작동 완료 이상 없음
+		조건식 insert 문 : 
+		insert into go_board_company_table (brd_cm_title, brd_cm_cont, com_name, mem_id)
+		values (#{brd_cm_title}, #{brd_cm_cont}, #{com_name}, #{mem_id})
+		select #{brd_cm_title}, #{brd_cm_cont}, #{com_name}, #{mem_id}
+		select "dd","ddd","dddd","d111"
+		from dual where exists(select from go_board_company_table where mem_level = 2)
+		FROM DUAL WHERE NOT EXISTS (select from go_board_company_table where mem_level = 2)
+		 -->
+		<!-- insert into go_board_company_table (brd_cm_title, brd_cm_cont, com_name, mem_id)
+		select #{brd_cm_title}, #{brd_cm_cont}, #{com_name}, #{mem_id}
+		from dual where exists(select * from go_board_company_table where mem_level = 2) -->
+		
+		insert into go_board_company_table (brd_cm_title, brd_cm_cont, com_name, mem_id)
+		values (#{brd_cm_title}, #{brd_cm_cont}, #{com_name}, #{mem_id})
+	</insert>                     
+	
+	<!-- 회사 소식 : 게시판 페이징 처리하는데 필요 -->
+	<select id="selectcompanyboard" resultType="company.blind.dto.Go_Board_CompanyDTO">
+		select * from Go_Board_Company_Table
+		where brd_cm_num = #{brd_cm_num}
+	</select>
+	
+	<!-- 회사 소식 : 수정 -->
+	<update id="updatecompanyboard">
+		update Go_Board_Company_Table
+		set brd_cm_title = #{brd_cm_title}, brd_cm_cont = #{brd_cm_cont}
+		where brd_cm_num = #{brd_cm_num}
+	</update>
+	
+	
+	<!-- 회사 소식 : 삭제 -->
+	<delete id="deletecompanyboard">
+		delete from Go_Board_Company_Table
+		where brd_cm_num = #{brd_cm_num}
+	</delete>
+	
+	<!-- 회사 소식 : 전체조회 -->
+	<select id="numlistcompanyboard" resultType="company.blind.dto.Go_Board_CompanyDTO">
+		<![CDATA[
+			select * from Go_Board_Company_Table
+			where brd_cm_num > 0
+			order by brd_cm_num desc, brd_cm_regdate desc
+		]]>
+	</select>
+	
+	<!-- 회사 소식 : 페이지 처리 -->
+	<select id="listcompanypage" resultType="company.blind.dto.Go_Board_CompanyDTO">
+		<![CDATA[
+			select * from Go_Board_Company_Table
+			where brd_cm_num > 0
+			order by brd_cm_num desc, brd_cm_regdate desc
+			limit #{page}, 20
+		]]>
+	</select>
+	
+	<!-- 회사 소식 : 페이지 처리 번호로 찾아오기 -->
+	<select id="listPageBasicCompany" resultType="company.blind.dto.Go_Board_CompanyDTO">
+		<![CDATA[
+			select * from Go_Board_Company_Table
+			where brd_cm_num > 0
+			order by brd_cm_num desc, brd_cm_regdate desc
+			limit #{startPage}, #{numPage}
+		]]>
+	</select>
+	
+	<!-- 페이지 처리 -->
+	<select id="countDataCompany" resultType="int">
+		<![CDATA[
+			select count(brd_cm_num) from Go_Board_Company_Table
+			where brd_cm_num > 0
+		]]>
+	</select>
+	
+	<!-- 검색 처리 -->
+	<select id="listFindCompany" resultType="company.blind.dto.Go_Board_CompanyDTO">
+		<![CDATA[
+			select * from Go_Board_Company_Table
+			where brd_cm_num >0
+		]]>
+			<include refid="fridSQLCompany"></include>
+		<![CDATA[
+			order by brd_cm_num desc, brd_cm_regdate desc
+			limit #{startPage}, #{numPage}
+		]]>
+	</select>
+	
+	<!-- 검색 처리할 때 countData -->
+	<select id="findCountCompany" resultType="int">
+		<![CDATA[	
+			select count(brd_cm_num) from Go_Board_Company_Table
+			where brd_cm_num >0
+		]]>
+		<include refid="fridSQLCompany"></include>
+	</select>
+	
+	<sql id="fridSQLCompany">
+		<if test="findType != null">
+		
+			<!-- 제목으로 -->
+			<if test="findType == 'BCT'.toString()">
+				and brd_cm_title like CONCAT('%', #{word}, '%')
+			</if>
+			<!-- 내용으로 -->
+			<if test="findType == 'BCC'.toString()">
+				and brd_cm_cont like CONCAT('%', #{word}, '%')
+			</if>
+			<!-- 작성자로 -->
+			<if test="findType == 'BMI'.toString()">
+				and mem_id like CONCAT('%', #{word}, '%')
+			</if>
+			<!-- 제목 + 내용으로 -->
+			<if test="findType == 'TC'.toString()">
+				and mem_id like CONCAT('%', #{word}, '%')
+			</if>
+			
+		</if>
+	</sql>
+
+
+
+
+</mapper>

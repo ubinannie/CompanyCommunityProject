@@ -1,0 +1,124 @@
+html, body, .grid-container { width: 100%;  height: 100%; margin: 0;  }
+  
+.grid-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  gap: 90px 17px;
+  padding-right: 13%;
+  padding-left: 13%;
+  padding-bottom: 30em;
+  padding-top: 5%;
+  grid-template-areas:
+    "grid1 grid1"
+    "grid2 grid4"
+    "grid3 grid4";
+}
+
+.grid1 { grid-area: grid1; }
+
+.grid2 { grid-area: grid2; }
+
+.grid3 { grid-area: grid3; }
+
+.grid4 { grid-area: grid4; }
+
+
+/* For presentation only, no need to copy the code below */
+.grid-container * {
+  border: 1px solid #ffffff;
+  position: relative;
+  width: 100%;
+  position: center;
+}
+
+.grid-container *:after {
+  
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+a {text-decoration: none;}
+
+a:hover {text-decoration: none; color: none;}
+
+
+.btn-warning2{
+  /* background-color: burlywood; */
+  border-color: white;
+  background-color:#495464;
+  border-radius: 30px;
+}
+
+.btn-danger2{
+  background-color:#495464;
+  border-color: white;
+  border-radius: 30px;
+}
+
+.btn-danger3{
+	background-color: #495464;
+	border-color: white;
+	border-radius:30px;
+}
+
+
+.btn btn-secondary{
+  background-color: #abb3c0;
+}
+
+.sm_container{
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex-direction: row;
+  padding-left: 10%;
+  width: 100%;
+}
+
+#write, #login{
+  width: 100%;
+}
+
+.more-view{
+  text-decoration:none;
+  color: black;
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.mid {
+  padding-left: 15em;
+  padding-right: 15em;
+  padding-top: 3em;
+}
+
+.btn-register {
+   border-color: white;
+   background: #495464;
+   /*background-color:#03c751af;*/
+   font-weight: bold;
+}
+
+
+.btn-cancel {
+   border-color: white;
+   background:#495464;
+   /*background-color:#03c751af;*/
+   font-weight: bold;
+}
+
+.btn-comment {
+	border-color: white;
+	background:#495464;
+	font-weight: bold;
+	
+}
+
+
+
+
+.sp{
+  color: white;
+}

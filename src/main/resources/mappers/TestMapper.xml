@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="company.exam.dao">
+
+	<insert id="insertMember">
+		insert into go_member
+		values (#{mem_id}, #{mem_pwd}, #{mem_email}, #{mem_age_range}, #{mem_birth}, #{mem_birthyear}, #{mem_gender}, #{mem_phone})
+	</insert>
+		
+</mapper>

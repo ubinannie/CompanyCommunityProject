@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="company.blind.dao.CommentDAO">
+	
+	<insert id="insertComment">
+		insert into go_comment (com_cont, com_group, brd_num, mem_id)
+		values (#{com_cont}, #{com_group}, #{brd_num}, #{mem_id})
+	</insert>
+	
+	<update id="updateComment">
+		update go_comment
+		set com_cont = #{com_cont}
+		where cmt_num = #{cmt_num}	
+	</update>
+	
+	<delete id="deleteComment">
+		delete from go_comment where cmt_num = #{cmt_num}	
+	</delete>
+	
+	<select id="listComment" resultType="company.blind.dto.CommentDTO">
+	<![CDATA[
+		SELECT ani.cmt_num
+			, CASE WHEN LEVEL-1 > 0 then CONCAT(CONCAT(REPEAT('    ', level  - 1),'┗'), ani.com_cont)
+		                 ELSE ani.com_cont
+		           END AS com_cont
+		     , fnc.level AS com_lev
+		     , ani.com_group
+		     , ani.brd_num
+		     , ani.mem_id
+		     , ani.com_regdate
+		  FROM
+		     (SELECT comment_hierarchi() AS id, @level AS level
+		        FROM (SELECT @start_with:=0, @id:=@start_with, @level:=0) vars
+		          JOIN go_comment
+		         WHERE @id IS NOT NULL) fnc
+		  JOIN go_comment ani ON fnc.id = ani.cmt_num
+		  where brd_num = #{brd_num}
+	]]>	
+	</select>
+	
+	<select id="readComment" resultType="company.blind.dto.CommentDTO">
+		select * from go_comment
+		where cmt_num = #{cmt_num}
+	</select>
+	
+	<select id="listCommentByMem" resultType="company.blind.dto.CommentDTO">
+		select * from go_comment
+		where mem_id = #{mem_id}
+	</select>
+	
+	
+</mapper>

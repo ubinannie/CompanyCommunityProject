@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="company.blind.dao.Go_BoardDAO">
+
+	<!-- 게시판 작성하는 SQL문 -->
+	<insert id="insertboard">
+		insert into Go_Board (brd_title, brd_cont, com_name, mem_id,brd_viewed,Like_cnt)
+		values (#{brd_title}, #{brd_cont}, #{com_name}, #{mem_id},#{brd_viewed},#{Like_cnt})
+	</insert>	
+	
+	
+
+		<!-- 글작성 할 때 조건 걸기
+			체크박스 option 선택 시
+			sql 동적 쿼리 문 사용해서 변수와 동일한 데이터를 작성 할 수 있게끔 만들어줘야함
+			1) 익명 / 2) 자유 / 3) 회사소식 -->
+	
+	<!-- 글 작성할 때 조건식
+	<sql id="findSQL">
+		<if test="insertType != null">
+			 익명으로
+			<if test="insertType == 'NN'.toString()">
+				insert into Go_Board (brd_title, brd_cont, com_name, mem_id)
+				values (#{brd_title}, #{brd_cont}, #{com_name}, #{mem_id})
+			</if>
+			 자유
+			<if test="insertType == 'FR'.toString()">
+				and brd_cont like CONCAT('%', #{key}, '%')
+				insert into Go_Board (brd_title, brd_cont, com_name, mem_id)
+				values (#{brd_title}, #{brd_cont}, #{com_name}, #{mem_id})
+			</if>
+			 회사소식
+			<if test="insertType == 'CP'.toString()">
+				insert into go_board_company_table (brd_cm_title, brd_cm_cont, com_name, mem_id)
+				select #{brd_cm_title}, #{brd_cm_cont}, #{com_name}, #{mem_id}
+				from dual where exists(select * from go_board_company_table where mem_level = 2)
+			</if>
+
+		</if>
+	</sql>
+	 -->
+	
+	
+	<!-- 게시판 개별로 찾아오게 하는 SQL문 : 번호로 찾기 -->
+	<select id="selectboard" resultType="company.blind.dto.Go_BoardDTO">
+		select * from Go_Board
+		where brd_num = #{brd_num}
+	</select>
+	
+	<!-- 수정하는 SQL문 -->
+	<update id="updateboard">
+		update Go_Board
+		set brd_title = #{brd_title}, brd_cont = #{brd_cont}
+		where brd_num = #{brd_num}
+	</update>
+	
+	<!-- 삭제하는 SQL문 -->
+	<delete id="deleteboard">
+		delete from Go_Board
+		where brd_num = #{brd_num}
+	</delete>
+	
+	<!-- "번호"로 전체조회하는 SQL문 -->
+	<select id="numlist" resultType="company.blind.dto.Go_BoardDTO">
+		<![CDATA[
+			select * from Go_Board
+			where brd_num > 0
+			order by brd_num desc, brd_regdate desc
+		]]>
+	</select>
+	
+	<!-- "번호"로 전체조회하는 SQL문 -->
+	<!-- 여기 수정해야함 -->
+	<select id="viewelist" resultType="company.blind.dto.Go_BoardDTO">
+		<![CDATA[
+			select * from Go_Board
+			where brd_viewed > 0
+			order by brd_viewed desc, regdate desc
+			limit #{page}, 20
+		]]>
+	</select>
+	
+	<!-- 페이지 처리 -->
+	<!-- 한 페이지에서 20개씩 나오게 하고 싶음 -->
+	<select id="listPage" resultType="company.blind.dto.Go_BoardDTO">
+		<![CDATA[
+			select * from Go_Board
+			where brd_num > 0
+			order by brd_num desc, brd_regdate desc
+			limit #{page}, 20
+		]]>
+	</select>
+	
+	<!-- ============================================================================ -->
+	
+	<!-- 페이지 처리 동적 sql 문 사용 
+			사용 안할꺼임
+	<select id="listPageBasic" resultType="company.blind.dto.Go_BoardDTO">
+		<![CDATA[
+			select * from Go_Board
+		]]>
+			<include refid="findPageSQL"></include>
+		<![CDATA[
+			limit #{startPage}, #{numPage}
+		]]>
+	</select>
+	
+	<select id="countData" resultType="int">
+		select count(brd_num) from Go_Board
+		where brd_num > 0
+	</select>
+	
+	정렬 : 페이지 : 1) 번호수 2) 조회수 3) 시간순 4) 좋아요수
+	<sql id="findPageSQL">
+		<if test="listType != null">
+			<if test="listType == 'NUMBER'.toString()">
+				where brd_num > 0
+				and brd_num like CONCAT('%', #{keyword}, '%')
+				order by brd_num desc
+			</if>
+			<if test="listType == 'VIEW'.toString()">
+				where brd_viewed > 0
+				and brd_viewed like CONCAT('%', #{keyword}, '%')
+				order by brd_viewed desc
+			</if>
+			<if test="listType == 'Date'.toString()">
+				where brd_num > 0
+				and brd_regdate like CONCAT('%', #{keyword}, '%')
+				order by brd_regdate desc
+			</if>
+		</if>
+	</sql>
+	
+	<sql id="findPageCountSQL">
+		<if test="listType != null">
+			<if test="listType == 'NUMBER'.toString()">
+				select count(brd_num) from Go_Board
+				where brd_num > 0
+				and brd_num like CONCAT('%', #{keyword}, '%')
+				order by brd_num desc
+			</if>
+			<if test="listType == 'VIEW'.toString()">
+				select count(brd_viewed) from Go_Board
+				where brd_viewed > 0
+				and brd_viewed like CONCAT('%', #{keyword}, '%')
+				order by brd_viewed desc
+			</if>
+			<if test="listType == 'Date'.toString()">
+				select count(brd_num) from Go_Board
+				where brd_num > 0
+				and brd_regdate like CONCAT('%', #{keyword}, '%')
+				order by brd_regdate desc
+			</if>
+		</if>
+	</sql>
+	 -->
+	
+	<!-- ============================================================================ -->
+	<!-- 페이지 처리 : 번호 (시간) 순서 -->
+	
+	<select id="listPageBasic" resultType="company.blind.dto.Go_BoardDTO">
+		<![CDATA[
+			select * from Go_Board
+			where brd_num > 0
+			order by brd_num desc, brd_regdate desc
+			limit #{startPage}, #{numPage}
+		]]>
+	</select>
+	
+	<select id="countData" resultType="int">
+		select count(brd_num) from Go_Board
+		where brd_num > 0
+	</select>
+	
+	<!-- 페이지 처리 : 조회수 순서 -->
+	<!-- id 바꾸기 dto에서부터 시작 -->
+	<select id="ViewlistPageBasic" resultType="company.blind.dto.Go_BoardDTO">
+		<![CDATA[
+			select * from Go_Board
+			order by brd_viewed desc
+			limit #{startPage}, #{numPage}
+		]]>
+	</select>
+	
+	<select id="ViewcountData" resultType="int">
+		select count(brd_viewed) from Go_Board
+	</select>
+	
+	<!-- ============================================================================ -->
+
+    <!-- 검색 처리 기능 -->
+    <select id="listFind" resultType="company.blind.dto.Go_BoardDTO">
+		<![CDATA[
+			select * from Go_Board
+			where brd_num > 0
+		]]>
+			<include refid="findSQL"></include>
+		<![CDATA[
+			order by brd_num desc, brd_regdate desc
+			limit #{startPage}, #{numPage}
+		]]>
+	</select>
+	
+	<select id="findCount" resultType="int">
+		<![CDATA[
+			select count(brd_num) from Go_Board
+			where brd_num > 0 
+		]]>
+		<include refid="findSQL"></include>
+	</select>
+	
+	<sql id="findSQL">
+		<if test="findType != null">
+			<!-- 제목으로 -->
+			<if test="findType == 'NAME'.toString()">
+				and brd_title like CONCAT('%', #{word}, '%')
+			</if>
+			<!-- 내용으로 -->
+			<if test="findType == 'TEXT'.toString()">
+				and brd_cont like CONCAT('%', #{word}, '%')
+			</if>
+			<!-- 작성자로 -->
+			<if test="findType == 'WRITER'.toString()">
+				and mem_id like CONCAT('%', #{word}, '%')
+			</if>
+			<!-- 제목+내용으로 -->
+			<if test="findType == 'NAMETEXT'.toString()">
+				and brd_title like CONCAT('%', #{word}, '%')
+				or brd_cont like CONCAT('%', #{word}, '%')
+			</if>
+		</if>
+	</sql>
+	
+	<!-- 조회수 증가 : 이거 안쓰고 뷰에서 처리하는게 더 쉬움 -->
+	<update id="updateViewCnt">
+		update Go_Board
+		set brd_viewed = brd_viewed + 1
+		where brd_num = #{brd_num}
+	</update>
+	
+	<!-- 좋아요 증가 -->
+	<update id="updatelikeCntUp">
+		update Go_Board
+		set Like_cnt = Like_cnt + 1
+		where brd_num = #{brd_num}
+	</update>
+	
+	<!-- 좋아요 감소 -->
+	<update id="updatelikeCntDown">
+		update Go_Board
+		set Like_cnt = Like_cnt - 1
+		where brd_num = #{brd_num}
+	</update>
+	
+	<!-- 좋아요 정렬 -->
+	
+  	 <select id="likelistPageBasic" resultType="company.blind.dto.Go_BoardDTO">
+		<![CDATA[
+			select * from Go_Board
+			order by Like_cnt desc
+			limit #{startPage}, #{numPage}
+		]]>
+	</select>
+	
+	<!-- 좋아요 정렬 카운트 -->
+	<select id="LikeCountData" resultType="int">
+		select count(Like_cnt) from Go_Board
+	</select>
+    
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
