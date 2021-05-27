@@ -15,4 +15,5 @@ BlahBlah블라인드회사커뮤니티
 - 류지연 / 정대현 (프론트엔드) : 전체 UI 담당 
 - 정지원 (프론트엔드) : 로그인 
 
-* PPT -> ISSUES에 첨부
+- PPT -> ISSUES에 첨부
+- https://github.com/ubinannie/CompanyCommunityProject/issues/1
